@@ -1,42 +1,73 @@
 public abstract class Button implements GUIElement{
     
-    private final PApplet PARENT;
+    //private final PApplet PARENT;
+    protected final Page PAGE;
     protected final String LABEL; 
     private final int X, Y, WDTH;
-    private final PImage IMG;
+    private final PShape SHP;
     protected boolean selected = false;
    
-    public Button(PApplet parent, String label, String pathImage, int x, int y, int wdth) {
-      PARENT = parent;
-      parent.registerMethod("mouseEvent", this);
+    public Button(PApplet parent, Page page, String label, String pathImage, int x, int y, int wdth) {
+      //PARENT = parent;
+      //parent.registerMethod("mouseEvent", this);
+      PAGE = page;
+      page.addElement(this);
       
       LABEL = label;
       X = x;
       Y = y;
       WDTH = wdth;
       
-      IMG = loadImage(pathImage);
-      IMG.resize(0, WDTH);
+      SHP = loadShape(pathImage);
     }
     
    
-    public void draw(PGraphics canvas) {
-      canvas.imageMode(CENTER);
-      canvas.image(IMG, X, Y);
+    public void draw() {
+      shapeMode(CENTER);
+      if(!selected){
+        SHP.disableStyle();
+        fill(#FF0000);
+        stroke(#FF0000);
+        shape(SHP, X, Y, WDTH, WDTH);
+      }else if(selected){
+        SHP.enableStyle();
+        shape(SHP, X, Y, WDTH, WDTH);
+      }
+      
     }
     
-    
+    public void click(int x, int y) {
+         println("in");
+         if(PAGE.isActive() && mouseX > (X-SHP.width/2) && mouseX < (X+SHP.width/2) && mouseY > (Y-SHP.height/2) && mouseY < (Y+SHP.height/2)){
+           selected = true;
+           whenSelected();
+         } else {
+           selected = false;
+         }
+    }
+    /*
     public void mouseEvent(MouseEvent e) {
           switch(e.getAction()) {
               case MouseEvent.PRESS:
-                  if(mouseX > (X-IMG.width/2) && mouseX < (X+IMG.width/2) && mouseY > (Y-IMG.height/2) && mouseY < (Y+IMG.height/2)){
+                  if(PAGE.isActive() && mouseX > (X-SHP.width/2) && mouseX < (X+SHP.width/2) && mouseY > (Y-SHP.height/2) && mouseY < (Y+SHP.height/2)){
                      selected = true;
                      whenSelected();
+                  }else{
+                     selected = false;
                   }
                   break;
           }
-      }
+    }
+    */
     
+    public boolean isSelected(){
+        return selected;
+    }
+    
+    
+    public void unselect(){
+        selected = false;
+    }
     
     protected abstract void whenSelected();
     
@@ -48,8 +79,8 @@ public class SwitcherButton extends Button{
     
     int switchTo;
     
-    SwitcherButton(PApplet parent, String label, int switchTo, String pathImage, int x, int y, int wdth){
-      super(parent, label, pathImage, x, y, wdth);
+    SwitcherButton(PApplet parent, Page page, String label, int switchTo, String pathImage, int x, int y, int wdth){
+      super(parent, page, label, pathImage, x, y, wdth);
       this.switchTo = switchTo;
     }
     
@@ -69,8 +100,8 @@ public class SwitcherButton extends Button{
 
 public class SenderButton extends Button {
   
-    SenderButton(PApplet parent, String label, String pathImage, int x, int y, int wdth) {
-      super(parent, label, pathImage, x, y, wdth);
+    SenderButton(PApplet parent, Page page, String label, String pathImage, int x, int y, int wdth) {
+      super(parent, page, label, pathImage, x, y, wdth);
     }
     
     protected void whenSelected() {
@@ -89,9 +120,14 @@ public class SenderSwitcherButton extends Button {
     
     int switchTo;
     
-    SenderSwitcherButton(PApplet parent, String label, int switchTo, String pathImage, int x, int y, int wdth) {
-      super(parent, label, pathImage, x, y, wdth);
+    SenderSwitcherButton(PApplet parent, Page page, String label, int switchTo, String pathImage, int x, int y, int wdth) {
+      super(parent, page, label, pathImage, x, y, wdth);
       this.switchTo = switchTo;
+    }
+    
+    
+    public boolean isSelected(){
+        return selected;
     }
     
     

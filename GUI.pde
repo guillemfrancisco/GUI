@@ -1,56 +1,43 @@
-PGraphics canvas;
-
 int currentPage = 0;
 Page p0, p1, p2;
-
-SenderSwitcherButton abm, solar;
-SwitcherButton back;
+ArrayList<Page> pages = new ArrayList();
 
 
 
-void setup(){
-  fullScreen();
+void setup() {
+  fullScreen(P3D);
+    
+  Page p0 = new Page(0);
+  p0.active = true;
+  pages.add(p0);
+  Page p1 = new Page(1);
+  pages.add(p1);
+  Page p2 = new Page(2);
+  pages.add(p2);
   
-  canvas = createGraphics(width, height);
-  
-  p0 = new Page(0);
-  p1 = new Page(1);
-  p2 = new Page(2);
-  
-  abm = new SenderSwitcherButton(this, "abm", 1, "data/icons/telecom.png", 2*width/5, height/2, 170);
-  solar = new SenderSwitcherButton(this, "solar", 2, "data/icons/solar.png", 3*width/5, height/2, 170);
-  back = new SwitcherButton(this, "back", 0, "data/icons/back.png", 30, 30, 25);
-  
-  p0.addElement(abm);
-  p0.addElement(solar);
-  p1.addElement(back);
-  p2.addElement(back);
+  SenderSwitcherButton abm = new SenderSwitcherButton(this, p0, "abm", 1, "data/icons/antenna.svg", 2*width/5, height/2, 170);
+  SenderSwitcherButton solar = new SenderSwitcherButton(this, p0, "solar", 2, "data/icons/sun.svg", 3*width/5, height/2, 170);
+  SwitcherButton backAbm = new SwitcherButton(this, p1, "back", 0, "data/icons/back.svg", 30, 30, 25);
+  SwitcherButton backSolar = new SwitcherButton(this, p2, "back", 0, "data/icons/back.svg", 30, 30, 25);
   
 }
 
 
-void draw(){
+void draw() {
   
-  if(currentPage == 0){
-      canvas.beginDraw();
-      canvas.background(255);
-      p0.draw(canvas);
-      canvas.endDraw();
-      image(canvas, 0, 0);
-      
-  }else if(currentPage == 1){
-      canvas.beginDraw();
-      canvas.background(255);
-      p1.draw(canvas);
-      canvas.endDraw();
-      image(canvas, 0, 0);
-    
-  }else if(currentPage == 2){
-      canvas.beginDraw();
-      canvas.background(255);
-      p2.draw(canvas);
-      canvas.endDraw();
-      image(canvas, 0, 0);
-  }
+  background(255);
+  pages.get(currentPage).draw();
+  
+  
+  
+}
+
+
+
+void mousePressed() {
+  Page active = pages.get(currentPage);
+  active.click(mouseX, mouseY);
+  active.active = false;
+  pages.get(currentPage).active = true;
   
 }
